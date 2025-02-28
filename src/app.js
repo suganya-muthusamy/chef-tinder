@@ -32,27 +32,33 @@ app.post("/user", async (req, res) => {
 // });
 
 // to get user by id 0r email or age whatever
-// app.get("/user", async (req, res) => {
-//   try {
-//     const user = await UserModel.findOne({ emailId: "dharsan@gmail.com" });
-//     res.send(user);
-//   } catch (err) {
-//     res.send("Error" + err.message);
-//   }
-// });
+app.get("/user", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ emailId: "prasath@gmail.com" });
+    res.send(user);
+  } catch (err) {
+    res.send("Error" + err.message);
+  }
+});
 
 // to update user
-// app.patch("/user", async (req, res) => {
-//   try {
-//     const userUpdate = await UserModel.findByIdAndUpdate(
-//       "67bf3927af70a0b9d7c801fa",
-//       { emailId: "dharsan123@gmail.com" }
-//     );
-//     res.send(userUpdate);
-//   } catch (err) {
-//     res.send("Error" + err.message);
-//   }
-// });
+app.patch("/user", async (req, res) => {
+  try {
+    const userUpdate = await UserModel.findByIdAndUpdate(
+      "67bf3927af70a0b9d7c801fa",
+      {
+        emailId: "dharsan56@gmail.com",
+        firstName: "Dharsan",
+        lastName: "Natraj",
+        skills: ["Drawing", "playing"],
+      },
+      { runValidators: true }
+    );
+    res.send(userUpdate);
+  } catch (err) {
+    res.send("Error" + err.message);
+  }
+});
 
 // to delete user
 app.delete("/user", async (req, res) => {
