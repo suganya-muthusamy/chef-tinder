@@ -1,23 +1,68 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const { connectDB } = require("./config/database");
 
 const { UserModel } = require("./models/user");
+const e = require("express");
 
 // This is the middleware to convert the all requests into json format.
 app.use(express.json());
+app.use(cookieParser());
 
-app.post("/user", async (req, res) => {
+app.post("/signup", async (req, res) => {
   //creating the instant of new users
-  console.log(req.body);
-  const newUser = new UserModel(req.body);
-
   try {
+    const { firstName, lastName, emailId, password, age, gender } = req.body;
+
+    // hashing the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new UserModel({
+      firstName,
+      lastName,
+      emailId,
+      password: hashedPassword,
+      age,
+      gender,
+    });
+
     await newUser.save();
     res.send("user saved successfully");
   } catch (err) {
     res.send("Error" + err.message);
+  }
+});
+
+// Login API
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    // find whether the user is present or not
+    const user = await UserModel.findOne({ emailId });
+
+    if (!user) {
+      throw new Error("user not found");
+    }
+
+    // compare the password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // jwt token generation
+    const jwtToken = jwt.sign({ _id: user._id }, "CHEF@tinder?build");
+    console.log(jwtToken);
+
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    } else {
+      res.cookie("token", jwtToken); // setting the cookie with jwt token
+      res.send("Loggedin successfully");
+    }
+  } catch (err) {
+    res.send("Error : " + err.message);
   }
 });
 
@@ -32,10 +77,15 @@ app.post("/user", async (req, res) => {
 // });
 
 // to get user by id 0r email or age whatever
-app.get("/user", async (req, res) => {
+app.get("/profile", async (req, res) => {
+  const cookies = req.cookies;
+  console.log(cookies);
+
   try {
-    const user = await UserModel.findOne({ emailId: "prasath@gmail.com" });
-    res.send(user);
+    // decoding/ verify the jwt token;
+    var decoded = jwt.verify(cookies.token, "CHEF@tinder?build");
+    console.log(decoded);
+    res.send("reading cookies");
   } catch (err) {
     res.send("Error" + err.message);
   }

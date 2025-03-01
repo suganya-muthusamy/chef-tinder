@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -18,18 +19,19 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
     validate(value) {
-      return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(value);
+      if (!validator.isEmail(value)) {
+        throw new Error("Invalid email");
+      }
     },
-    message: (props) => `${props.value} is not a valid email id!`,
   },
   password: {
     type: String,
     required: true,
     validate(value) {
-      return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value);
+      if (!validator.isStrongPassword(value)) {
+        throw new Error("Password is not strong enough");
+      }
     },
-    message: (props) =>
-      `Password should contain at least one uppercase letter, one lowercase letter, one numeric digit, and minimum of 8 characters`,
   },
   age: {
     type: Number,
