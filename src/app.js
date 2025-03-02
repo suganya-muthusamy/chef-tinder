@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 const { connectDB } = require("./config/database");
@@ -53,7 +54,7 @@ app.post("/login", async (req, res) => {
 
     // jwt token generation
     const jwtToken = jwt.sign({ _id: user._id }, "CHEF@tinder?build");
-    console.log(jwtToken);
+    // console.log(jwtToken);
 
     if (!isMatch) {
       throw new Error("Invalid credentials");
@@ -66,61 +67,22 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// to get all users from DB
-// app.get("/user", async (req, res) => {
-//   try {
-//     const allusers = await UserModel.find();
-//     res.send(allusers);
-//   } catch (err) {
-//     res.send("Error" + err.message);
-//   }
-// });
-
 // to get user by id 0r email or age whatever
-app.get("/profile", async (req, res) => {
-  const cookies = req.cookies;
-  console.log(cookies);
+app.get("/profile", userAuth, async (req, res) => {
+  const user = req.user;
+  res.send(user.firstName + " " + "is logged in!!");
+  // res.send("reading cookies");
+});
 
+// to make connection request to other user
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
   try {
-    // decoding/ verify the jwt token;
-    var decoded = jwt.verify(cookies.token, "CHEF@tinder?build");
-    console.log(decoded);
-    res.send("reading cookies");
+    res.send("connection request sent successfully");
   } catch (err) {
-    res.send("Error" + err.message);
+    res.send("Error : " + err.message);
   }
 });
 
-// to update user
-app.patch("/user", async (req, res) => {
-  try {
-    const userUpdate = await UserModel.findByIdAndUpdate(
-      "67bf3927af70a0b9d7c801fa",
-      {
-        emailId: "dharsan56@gmail.com",
-        firstName: "Dharsan",
-        lastName: "Natraj",
-        skills: ["Drawing", "playing"],
-      },
-      { runValidators: true }
-    );
-    res.send(userUpdate);
-  } catch (err) {
-    res.send("Error" + err.message);
-  }
-});
-
-// to delete user
-app.delete("/user", async (req, res) => {
-  console.log(req.body);
-  const userId = req.body._id;
-  try {
-    const userDelete = await UserModel.findByIdAndDelete(userId);
-    res.send(userDelete);
-  } catch (err) {
-    res.send("Error" + err.message);
-  }
-});
 connectDB().then(() => {
   console.log("DB connected successfully");
   app.listen(3000, () => {
