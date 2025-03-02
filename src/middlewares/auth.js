@@ -25,7 +25,7 @@ const userAuth = async (req, res, next) => {
     // 3. pass the user details to the next middleware
     next();
   } catch (err) {
-    res.send("Error : " + err.message);
+    res.send("Error: " + err.message);
   }
 };
 
