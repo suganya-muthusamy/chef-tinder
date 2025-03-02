@@ -53,13 +53,17 @@ app.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     // jwt token generation
-    const jwtToken = jwt.sign({ _id: user._id }, "CHEF@tinder?build");
+    const jwtToken = jwt.sign({ _id: user._id }, "CHEF@tinder?build", {
+      expiresIn: "7d", // token will be expired after 7 days
+    });
     // console.log(jwtToken);
 
     if (!isMatch) {
       throw new Error("Invalid credentials");
     } else {
-      res.cookie("token", jwtToken); // setting the cookie with jwt token
+      res.cookie("token", jwtToken, {
+        expires: new Date(Date.now() + 8 * 3600000), // cookie will be removed after 8 hours
+      }); // setting the cookie with jwt token
       res.send("Loggedin successfully");
     }
   } catch (err) {
