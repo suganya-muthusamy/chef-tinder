@@ -4,7 +4,6 @@ const { UserModel } = require("../models/user");
 const userAuth = async (req, res, next) => {
   try {
     // 1. get and verify the cookie
-
     const cookies = req.cookies;
     if (!cookies.token) {
       throw new Error("Please login first");
@@ -12,7 +11,6 @@ const userAuth = async (req, res, next) => {
 
     // decoding/ verify the jwt token;
     var decoded = jwt.verify(cookies.token, "CHEF@tinder?build");
-    // console.log("decoded : ", decoded);
     if (!decoded) {
       throw new Error("Please login first");
     }

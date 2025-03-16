@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const validator = require("validator");
+const validator = require("validator"); // to validate email and password strength etc
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -43,11 +43,15 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: true,
-    validate(value) {
-      if (!["male", "female", "other"].includes(value.toLowerCase())) {
-        throw new Error("Invalid gender data");
-      }
+    enum: {
+      values: ["male", "Female", "other"],
+      message: "{VALUE} is invalid gender data",
     },
+    // validate(value) {
+    //   if (!["male", "female", "other"].includes(value.toLowerCase())) {
+    //     throw new Error("Invalid gender data");
+    //   }
+    // },
   },
   photoUrl: {
     type: String,
@@ -64,16 +68,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// we cannot use arrow function here, "this" keyword will not work with arrow function
-userSchema.methods.getJWT = async function () {
-  const user = this;
-  const token = jwt.sign({ _id: user._id }, "CHEF@tinder?build", {
-    expiresIn: "7d", //
-  });
-  return token;
-};
-
 // verify password
+// we cannot use arrow function here, "this" keyword will not work with arrow function
 userSchema.methods.verifyPassword = async function (passwordEnteredByUser) {
   const user = this;
   const hashedPassword = user.password;
@@ -82,6 +78,15 @@ userSchema.methods.verifyPassword = async function (passwordEnteredByUser) {
     hashedPassword
   );
   return isVerified;
+};
+
+// generate jwt token
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id }, "CHEF@tinder?build", {
+    expiresIn: "7d", //
+  });
+  return token;
 };
 
 const UserModel = mongoose.model("User", userSchema);
