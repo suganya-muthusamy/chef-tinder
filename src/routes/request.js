@@ -7,7 +7,7 @@ const { userAuth } = require("../middlewares/auth");
 
 // to make connection request to other user
 requestRouter.post(
-  "/request/send/:status/:toUserId",
+  "/user/request/send/:status/:toUserId",
   userAuth,
   async (req, res) => {
     try {
@@ -61,6 +61,44 @@ requestRouter.post(
       res.json({
         message: `Connection request sent successfully from ${fromUser.firstName} to ${toUser.firstName}`,
         data,
+      });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
+);
+
+// to accept or reject the connection request
+requestRouter.post(
+  "/user/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
+      const allowedStatus = ["accepted", "rejected"];
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).send({ message: "Invalid status" });
+      }
+
+      const connectionRequest = await ConnectionRequestModel.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      const userRequest = await ConnectionRequestModel.findById(requestId);
+      const toUser = await UserModel.findById(userRequest.fromUserId);
+      console.log("toUser", toUser);
+
+      if (!connectionRequest) {
+        return res.status(400).send({ message: "Invalid request" });
+      }
+
+      connectionRequest.status = status;
+      await connectionRequest.save();
+      res.json({
+        message: `${loggedInUser.firstName} has ${status} the request from ${toUser.firstName} `,
       });
     } catch (err) {
       res.status(400).json({ message: err.message });

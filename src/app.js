@@ -5,6 +5,7 @@ const { userAuth } = require("./middlewares/auth");
 const { authRouter } = require("./routes/auth");
 const { profileRouter } = require("./routes/profile");
 const { requestRouter } = require("./routes/request");
+const { userConnections } = require("./routes/user");
 
 const app = express();
 const { connectDB } = require("./config/database");
@@ -16,6 +17,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
+app.use("/", userConnections);
 
 connectDB().then(() => {
   console.log("DB connected successfully");
