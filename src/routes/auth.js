@@ -2,14 +2,14 @@ const express = require("express");
 const authRouter = express.Router();
 const bcrypt = require("bcrypt");
 const { UserModel } = require("../models/user");
+const { userAuth } = require("../middlewares/auth");
 
 // Signup API
 authRouter.post("/signup", async (req, res) => {
-  //creating the instant of new users
   try {
-    const { firstName, lastName, emailId, password, age, gender } = req.body;
+    const { firstName, lastName, emailId, password } = req.body;
 
-    // hashing the password
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new UserModel({
@@ -17,14 +17,19 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       emailId,
       password: hashedPassword,
-      age,
-      gender,
     });
 
-    await newUser.save();
-    res.send("user saved successfully");
+    const savedUser = await newUser.save();
+    const token = await savedUser.getJWT(); // Generate JWT token
+
+    res.cookie("token", token, { httpOnly: true, secure: true }); // Secure cookie
+    res.status(200).send({
+      message: "User saved successfully",
+      data: savedUser,
+    });
   } catch (err) {
-    res.send("Error" + err.message);
+    console.error("Signup Error:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -36,7 +41,7 @@ authRouter.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ emailId });
 
     if (!user) {
-      throw new Error("user not found");
+      return res.status(400).send("Invalid Credentials!");
     }
 
     // compare the password
@@ -45,10 +50,10 @@ authRouter.post("/login", async (req, res) => {
     if (isMatch) {
       const jwtToken = await user.getJWT(); // jwt token generation  // this logic written in user.js
 
-      res.cookie("token", jwtToken); // setting the cookie with jwt token
-      res.send("Loggedin successfully");
+      res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
+      res.send(user);
     } else {
-      throw new Error("Invalid credentials");
+      return res.status(400).send("Invalid Credentials!");
     }
   } catch (err) {
     res.send("Error : " + err.message);
@@ -57,7 +62,7 @@ authRouter.post("/login", async (req, res) => {
 
 // Logout API
 authRouter.post("/logout", async (req, res) => {
-  res.clearCookie("token");
+  res.cookie("token", null, { expires: new Date(Date.now()) });
   res.send("Logged out successfully");
 });
 

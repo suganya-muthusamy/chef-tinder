@@ -37,14 +37,12 @@ const userSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
-    required: true,
   },
 
   gender: {
     type: String,
-    required: true,
     enum: {
-      values: ["male", "Female", "other"],
+      values: ["Male", "Female", "Others"],
       message: "{VALUE} is invalid gender data",
     },
     // validate(value) {
@@ -65,6 +63,10 @@ const userSchema = new mongoose.Schema({
         throw new Error("Skills should be maximum of 20");
       }
     },
+  },
+  about: {
+    type: String,
+    default: "Hi there! I am using Chef Tinder!!",
   },
 });
 

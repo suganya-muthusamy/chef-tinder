@@ -77,31 +77,43 @@ requestRouter.post(
       const loggedInUser = req.user;
       const { status, requestId } = req.params;
       const allowedStatus = ["accepted", "rejected"];
+
+      // Validate the status
       if (!allowedStatus.includes(status)) {
         return res.status(400).send({ message: "Invalid status" });
       }
 
+      // Find the connection request that is in 'interested' status
       const connectionRequest = await ConnectionRequestModel.findOne({
         _id: requestId,
         toUserId: loggedInUser._id,
         status: "interested",
       });
 
-      const userRequest = await ConnectionRequestModel.findById(requestId);
-      const toUser = await UserModel.findById(userRequest.fromUserId);
-      console.log("toUser", toUser);
-
       if (!connectionRequest) {
-        return res.status(400).send({ message: "Invalid request" });
+        return res.status(400).send({ message: "Invalid or expired request" });
       }
 
+      // Find the user who sent the request (fromUserId)
+      const userRequest = await ConnectionRequestModel.findById(requestId);
+      const toUser = await UserModel.findById(userRequest.fromUserId);
+
+      if (!toUser) {
+        return res.status(400).send({ message: "Sender user not found" });
+      }
+
+      // Update the connection request status
       connectionRequest.status = status;
       await connectionRequest.save();
+
       res.json({
-        message: `${loggedInUser.firstName} has ${status} the request from ${toUser.firstName} `,
+        message: `${loggedInUser.firstName} has ${status} the request from ${toUser.firstName}`,
       });
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      console.error("Error processing request:", err);
+      res
+        .status(500)
+        .json({ message: "An error occurred while processing the request" });
     }
   }
 );

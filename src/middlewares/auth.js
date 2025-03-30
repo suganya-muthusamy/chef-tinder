@@ -6,19 +6,19 @@ const userAuth = async (req, res, next) => {
     // 1. get and verify the cookie
     const cookies = req.cookies;
     if (!cookies.token) {
-      throw new Error("Please login first");
+      return res.status(401).send("Login First!");
     }
 
     // decoding/ verify the jwt token;
     var decoded = jwt.verify(cookies.token, "CHEF@tinder?build");
-    if (!decoded) {
-      throw new Error("Please login first");
-    }
 
     // 2. get the user details
     const { _id } = decoded;
     const user = await UserModel.findById(_id);
     req.user = user;
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     // 3. pass the user details to the next middleware
     next();

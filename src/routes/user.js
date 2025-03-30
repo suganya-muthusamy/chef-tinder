@@ -5,7 +5,7 @@ const { UserModel } = require("../models/user");
 const { set } = require("mongoose");
 const userConnections = express.Router();
 
-const SAFE_USER_DATA = "firstName lastName age gender photoUrl skills";
+const SAFE_USER_DATA = "firstName lastName age gender photoUrl skills about";
 
 userConnections.get("/user/request/received", userAuth, async (req, res) => {
   try {
@@ -19,7 +19,7 @@ userConnections.get("/user/request/received", userAuth, async (req, res) => {
     }).populate("fromUserId", SAFE_USER_DATA); //from userModel
 
     res.json({
-      message: "All connections fetched successfully",
+      message: "All connection requests fetched successfully",
       data: pendingConnections,
     });
   } catch (error) {
@@ -93,7 +93,12 @@ userConnections.get("/feed", userAuth, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.send({ data: users });
+    // res.send({users.length>0? data: users:message: "No users found"});
+    res.json({
+      message:
+        users.length > 0 ? "Users fetched successfully" : "No users found",
+      data: users,
+    });
   } catch (error) {
     res.sendStatus(400).json({ message: error.message });
   }
