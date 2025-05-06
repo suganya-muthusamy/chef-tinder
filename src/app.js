@@ -13,12 +13,12 @@ const { connectDB } = require("./config/database");
 
 // This is the middleware to convert the all requests into json format.
 app.use(
-  // whitelisting
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://18.118.24.116", // your actual frontend URL or IP
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
