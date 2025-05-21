@@ -54,9 +54,15 @@ authRouter.post("/login", async (req, res) => {
     const isMatch = await user.verifyPassword(password); // this logic written in user.js
 
     if (isMatch) {
-      const jwtToken = await user.getJWT(); // jwt token generation  // this logic written in user.js
+      const token = await user.getJWT(); // jwt token generation  // this logic written in user.js
 
-      res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
+      // res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true, // ⚠️ You are NOT using HTTPS, so this must be false
+        sameSite: "Lax", // Good for same-origin
+      });
+      console.log("token", token);
       res.send(user);
     } else {
       return res.status(400).send("Invalid Credentials!");

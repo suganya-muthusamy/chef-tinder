@@ -6,7 +6,7 @@ const { userAuth } = require("../middlewares/auth");
 // to get user by id 0r email or age whatever
 profileRouter.get("/profile", userAuth, async (req, res) => {
   const user = req.user;
-  res.send(user);
+  res.send({ data: user, message: "User fetched successfully" });
   // res.send(user);
 });
 

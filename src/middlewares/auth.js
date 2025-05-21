@@ -4,6 +4,7 @@ const { UserModel } = require("../models/user");
 const userAuth = async (req, res, next) => {
   try {
     // 1. get and verify the cookie
+    console.log("cookies", req);
     const cookies = req.cookies;
     if (!cookies.token) {
       return res.status(401).send("Login First!");
