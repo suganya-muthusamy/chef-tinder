@@ -23,13 +23,13 @@ authRouter.post("/signup", async (req, res) => {
     const token = await savedUser.getJWT(); // Generate JWT token
 
     // res.cookie("token", token, { httpOnly: true, secure: true }); // Secure cookie
-    // res.cookie("token", token, {
-    //   httpOnly: true,
-    //   secure: true, // ⚠️ You are NOT using HTTPS, so this must be false
-    // });
     res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // ⚠️ You are NOT using HTTPS, so this must be false
+      sameSite: "Lax", // Good for same-origin
       expires: new Date(Date.now() + 8 * 3600000),
     });
+
     res.status(200).send({
       message: "User saved successfully",
       data: savedUser,
@@ -58,11 +58,10 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJWT(); // jwt token generation  // this logic written in user.js
 
       // res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
-      // res.cookie("token", token, {
-      //   httpOnly: true,
-      //   secure: true, // ⚠️ You are NOT using HTTPS, so this must be false
-      // });
       res.cookie("token", token, {
+        httpOnly: true,
+        secure: false, // ⚠️ You are NOT using HTTPS, so this must be false
+        sameSite: "Lax", // Good for same-origin
         expires: new Date(Date.now() + 8 * 3600000),
       });
       console.log("token", token);
