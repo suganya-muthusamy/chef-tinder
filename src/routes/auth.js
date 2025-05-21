@@ -22,11 +22,13 @@ authRouter.post("/signup", async (req, res) => {
     const savedUser = await newUser.save();
     const token = await savedUser.getJWT(); // Generate JWT token
 
+    // res.cookie("token", token, { httpOnly: true, secure: true }); // Secure cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    }); // Secure cookie
+      secure: false, // ⚠️ You are NOT using HTTPS, so this must be false
+      sameSite: "Lax", // Good for same-origin
+    });
+
     res.status(200).send({
       message: "User saved successfully",
       data: savedUser,
