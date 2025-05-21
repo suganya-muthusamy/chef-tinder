@@ -25,9 +25,10 @@ authRouter.post("/signup", async (req, res) => {
     // res.cookie("token", token, { httpOnly: true, secure: true }); // Secure cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // ⚠️ You are NOT using HTTPS, so this must be false
-      sameSite: "Lax", // Good for same-origin
-      expires: new Date(Date.now() + 8 * 3600000),
+      secure: true, // ✅ Only send cookie over HTTPS
+      sameSite: "None", // Allows cross-site cookie usage (adjust as needed)
+      // domain: yourdomain.com, // optional: restrict to your domain
+      maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
     });
 
     res.status(200).send({
@@ -60,10 +61,12 @@ authRouter.post("/login", async (req, res) => {
       // res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false, // ⚠️ You are NOT using HTTPS, so this must be false
-        sameSite: "Lax", // Good for same-origin
-        expires: new Date(Date.now() + 8 * 3600000),
+        secure: true, // ✅ Only send cookie over HTTPS
+        sameSite: "None", // Allows cross-site cookie usage (adjust as needed)
+        // domain: yourdomain.com, // optional: restrict to your domain
+        maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
       });
+
       console.log("token", token);
       res.send(user);
     } else {
