@@ -22,10 +22,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/", authRouter);
-app.use("/", profileRouter);
-app.use("/", requestRouter);
-app.use("/", userConnections);
+app.use("/api", authRouter);
+app.use("/api", profileRouter);
+app.use("/api", requestRouter);
+app.use("/api", userConnections);
 
 connectDB().then(() => {
   console.log("DB connected successfully");
