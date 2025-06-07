@@ -60,7 +60,6 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: true, // ✅ Only send cookie over HTTPS
-        maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
       });
 
       console.log("token", token);
