@@ -26,8 +26,6 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true, // ✅ Only send cookie over HTTPS
-      sameSite: "None", // Allows cross-site cookie usage (adjust as needed)
-      // domain: yourdomain.com, // optional: restrict to your domain
       maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
     });
 
@@ -62,8 +60,6 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: true, // ✅ Only send cookie over HTTPS
-        sameSite: "None", // Allows cross-site cookie usage (adjust as needed)
-        // domain: yourdomain.com, // optional: restrict to your domain
         maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
       });
 
