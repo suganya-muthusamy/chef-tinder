@@ -29,7 +29,7 @@ app.use("/api", userConnections);
 
 connectDB().then(() => {
   console.log("DB connected successfully");
-  app.listen(3000, () => {
-    console.log("app is listening @3000");
+  app.listen(7777, () => {
+    console.log("app is listening @7777");
   });
 });
