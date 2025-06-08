@@ -24,8 +24,7 @@ authRouter.post("/signup", async (req, res) => {
 
     // res.cookie("token", token, { httpOnly: true, secure: true }); // Secure cookie
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // ✅ Only send cookie over HTTPS
+      expires: new Date(Date.now() + 8 * 3600000),
     });
 
     res.status(200).send({
@@ -57,8 +56,7 @@ authRouter.post("/login", async (req, res) => {
 
       // res.cookie("token", jwtToken, { httpOnly: true, secure: true }); // Secure cookie
       res.cookie("token", token, {
-        httpOnly: true,
-        secure: true, // ✅ Only send cookie over HTTPS
+        expires: new Date(Date.now() + 8 * 3600000),
       });
 
       console.log("token", token);
