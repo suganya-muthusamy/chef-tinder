@@ -26,7 +26,6 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true, // ✅ Only send cookie over HTTPS
-      maxAge: 1000 * 60 * 60 * 24 * 7, // e.g. 7 days expiry
     });
 
     res.status(200).send({
@@ -63,7 +62,10 @@ authRouter.post("/login", async (req, res) => {
       });
 
       console.log("token", token);
-      res.send(user);
+      res.send({
+        message: "Login successful",
+        data: user,
+      });
     } else {
       return res.status(400).send("Invalid Credentials!");
     }
