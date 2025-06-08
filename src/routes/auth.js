@@ -60,7 +60,7 @@ authRouter.post("/login", async (req, res) => {
         expires: new Date(Date.now() + 8 * 3600000),
       });
 
-      console.log("token", token);
+      // console.log("token", token);
       res.send({
         message: "Login successful",
         data: user,

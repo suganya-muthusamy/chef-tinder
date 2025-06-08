@@ -4,14 +4,14 @@ const { UserModel } = require("../models/user");
 const userAuth = async (req, res, next) => {
   try {
     // 1. get and verify the cookie
-    console.log("cookies", req);
+    // console.log("cookies", req);
     const cookies = req.cookies;
     if (!cookies.token) {
       return res.status(401).send("Login First!");
     }
 
     // decoding/ verify the jwt token;
-    var decoded = jwt.verify(cookies.token, "CHEF@tinder?build");
+    var decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
 
     // 2. get the user details
     const { _id } = decoded;

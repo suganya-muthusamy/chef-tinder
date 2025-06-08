@@ -11,7 +11,7 @@ userConnections.get("/user/request/received", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
 
-    console.log(loggedInUser);
+    // console.log(loggedInUser);
 
     const pendingConnections = await ConnectionRequestModel.find({
       toUserId: loggedInUser._id,

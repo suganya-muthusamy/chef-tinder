@@ -20,8 +20,8 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
   const updates = req.body;
 
-  console.log("loggedInUser", loggedInUser);
-  console.log("updates", updates);
+  // console.log("loggedInUser", loggedInUser);
+  // console.log("updates", updates);
   const allowedUpdates = [
     "firstName",
     "lastName",

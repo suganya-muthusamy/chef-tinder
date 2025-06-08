@@ -85,7 +85,7 @@ userSchema.methods.verifyPassword = async function (passwordEnteredByUser) {
 // generate jwt token
 userSchema.methods.getJWT = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id }, "CHEF@tinder?build", {
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7d", //
   });
   return token;
