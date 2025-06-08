@@ -7,8 +7,8 @@ const { userAuth } = require("../middlewares/auth");
 profileRouter.get("/profile", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send({ data: user, message: "User fetched successfully" });
-    // res.send(user);
+    // res.send({ data: user, message: "User fetched successfully" });
+    res.send(user);
   } catch (error) {
     res.status(500).send({ message: "user not found", error: error.message });
   }
