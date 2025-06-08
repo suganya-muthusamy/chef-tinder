@@ -7,6 +7,7 @@ const { profileRouter } = require("./routes/profile");
 const { requestRouter } = require("./routes/request");
 const { userConnections } = require("./routes/user");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const { connectDB } = require("./config/database");
@@ -29,7 +30,7 @@ app.use("/", userConnections);
 
 connectDB().then(() => {
   console.log("DB connected successfully");
-  app.listen(7777, () => {
-    console.log("app is listening @7777");
+  app.listen(process.env.PORT, () => {
+    console.log(`app is listening @ ${process.env.PORT}`);
   });
 });

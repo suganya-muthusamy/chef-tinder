@@ -4,6 +4,7 @@ const requestRouter = express.Router();
 const { ConnectionRequestModel } = require("../models/connectionRequest");
 const { UserModel } = require("../models/user");
 const { userAuth } = require("../middlewares/auth");
+const { run } = require("../utils/sendEmail");
 
 // to make connection request to other user
 requestRouter.post(
@@ -53,11 +54,14 @@ requestRouter.post(
       });
       const data = await connectionRequest.save();
 
+      const resEmail = await run();
+      console.log("resEmail", resEmail);
+
       // save the connection request
 
       const fromUser = req.user;
 
-      console.log("toUser", toUser);
+      // console.log("toUser", toUser);
       res.json({
         message: `Connection request sent successfully from ${fromUser.firstName} to ${toUser.firstName}`,
         data,
